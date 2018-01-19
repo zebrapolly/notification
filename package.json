@@ -1,0 +1,24 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start:dev": "nodemon bin/server.js",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "concurrently --kill-others \"npm run build:watch\" \"npm run start:dev\""
+  },
+  "dependencies": {
+    "koa": "^2.4.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.3.0",
+    "koa-router-joi-validator": "0.0.4"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.43",
+    "@types/koa-bodyparser": "^3.0.26",
+    "@types/koa-router": "^7.0.27",
+    "@types/node": "^9.3.0"
+  }
+}
