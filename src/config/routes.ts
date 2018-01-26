@@ -1,12 +1,13 @@
-import PushController from '../controllers/PushController.js'
+import { IPushController } from '../controllers/PushController'
+import Container from './inversify.config';
+import { TYPES } from './types';
 
-type controller = PushController;
 
 interface IRoute 
   {
     path: string,
     method: string,
-    controller: controller,
+    controller: any,
     action: string,
     rules: {
       [key: string] : {
@@ -25,12 +26,32 @@ const routes: IRoutes = [
   {
     path: '/push/send',
     method: 'post',
-    controller: new PushController(),
-    action: 'send',
+    controller: Container.get<IPushController>(TYPES.IPushController),
+    action: "send",
     rules: {
       message: {
-        type: 'number',
-        options: { integer: true, required: true }
+        type: 'string',
+        options: { required: true }
+      },
+      authorization: {
+        type: 'string',
+        options: {required: true}
+      },
+      template: {
+        type: 'string',
+        options: {required: true}
+      },
+      locale: {
+        type: 'string',
+        options: {required: true}
+      },
+      title: {
+        type: 'string',
+        options: {required: true}
+      },
+      recipient: {
+        type: 'string',
+        options: {required: true}
       }
     }
   }

@@ -1,19 +1,35 @@
-import IController from './IController';
-import PushService from '../services/PushService';
+import { injectable, inject } from "inversify";
+import "reflect-metadata";
+import { TYPES } from '../config/types';
+import { PushService, IPushService } from '../services/PushService';
+import {
+  Context
+} from 'koa';
 
-
-class PushController {
-  private service: PushService;
-  constructor() {
-    this.service = new PushService();
-  }
-  // [key: string]: any;
-  // service = new PushService();
-  public send(): any {
-  // throw Error('some error');
-  console.log(this)
-    return this.service.push();
-  }
+type SendParams = {}
+type SendPayload = {
+  authorization: string,
+  message: string,
+  template: string,
+  locale: string,
+  title: string,
+  recipient: string
 }
 
-export default PushController;
+export interface IPushController {
+  send(params: SendParams, payload: SendPayload): Promise<any>
+}
+
+@injectable()
+export class PushController implements IPushController {
+  [key: string]: any;
+  private _service: IPushService;
+  public constructor(
+    @inject(TYPES.IPushService) service: IPushService
+  ) {
+    this._service = service;
+  }
+  public send = async(params: SendParams, payload: SendPayload): Promise < any > => {
+        return this._service.send(params, payload)
+    }
+}

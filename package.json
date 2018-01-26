@@ -4,21 +4,31 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "tsc --watch && ts-node bin/server.ts",
     "start:dev": "nodemon bin/server.js",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "dev": "concurrently --kill-others \"npm run build:watch\" \"npm run start:dev\""
+    "dev": "nodemon"
   },
   "dependencies": {
+    "inversify": "^4.9.0",
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.3.0",
-    "koa-router-joi-validator": "0.0.4"
+    "koa-router-joi-validator": "0.0.4",
+    "lodash": "^4.17.4",
+    "mysql": "^2.15.0",
+    "reflect-metadata": "^0.1.12",
+    "superagent": "^3.8.2"
   },
   "devDependencies": {
+    "@types/joi": "^13.0.5",
     "@types/koa": "^2.0.43",
     "@types/koa-bodyparser": "^3.0.26",
     "@types/koa-router": "^7.0.27",
-    "@types/node": "^9.3.0"
+    "@types/lodash": "^4.14.93",
+    "@types/mysql": "github:types/mysql",
+    "@types/node": "^9.3.0",
+    "@types/superagent": "^3.5.7"
   }
 }

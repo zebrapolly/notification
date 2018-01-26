@@ -1,0 +1,66 @@
+import { isNil, reduce, isBoolean } from 'lodash';
+import * as joi from 'joi';
+import { Context } from 'koa';
+
+export interface OptionsModel {
+  [key: string]: {
+    type: string;
+    options: {
+      [key: string]: any;
+    };
+  };
+}
+
+const generateJoiScheme = (rootKeys: string[], options: OptionsModel) => {
+  const schema = reduce(
+    rootKeys, // ['id','username']
+    (prevKey, currKey) => {
+      // currKey: 'id'
+      const optionKeys = Object.keys(options[currKey].options);
+
+      const joiScheme = reduce(
+        optionKeys,
+        (prevVal, optionKey) => {
+          const optionValue = options[currKey].options[optionKey];
+          const optionGotArgs = !isBoolean(optionValue);
+          const optionEnabled = optionValue === true;
+
+          if (optionGotArgs) {
+            return prevVal[optionKey](optionValue);
+          } else if (optionEnabled) {
+            return prevVal[optionKey]();
+          }
+          return prevVal;
+        },
+        joi[options[currKey].type]()
+      );
+      return { ...prevKey, [currKey]: joiScheme };
+    },
+    {}
+  );
+  return schema;
+};
+
+export function validator(options: OptionsModel): any {
+  if (isNil(options)) {
+    throw new Error('Schema cannot be empty.');
+  }
+  const rootKeys = Object.keys(options);
+  const schema = generateJoiScheme(rootKeys, options);
+
+  return (ctx: Context, next: Function) => {
+    if (isNil(ctx && ctx.request)) {
+      throw new Error('Request cannot be empty.');
+    }
+    const result = joi.validate(ctx.request.body, schema);
+
+    if (!result.error) {
+      return next();
+    }
+    const res = {
+      message: result.error.name,
+      stack: result.error.details
+    }
+    ctx.response.error(res, 400);
+  };
+}
